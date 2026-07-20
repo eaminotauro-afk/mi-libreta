@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Mi Libreta</title>
+<title>Darryn</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -172,14 +172,38 @@
   .ciclo-ring-inner{width:118px; height:118px; border-radius:50%; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center;}
   .ciclo-ring-inner span{font-family:Georgia,serif; font-size:30px; color:var(--text); line-height:1;}
   .ciclo-ring-inner small{font-size:11px; color:var(--muted); margin-top:2px;}
+
+  #splash-screen{position:fixed; inset:0; background:#0A0A0B; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .4s ease, visibility .4s;}
+  #splash-screen img{width:92px; height:92px; border-radius:22px; box-shadow:0 0 24px rgba(255,45,59,.5); animation:splashPop .5s ease;}
+  #splash-screen .splash-name{color:#F5EDEA; font-family:Georgia,serif; font-size:22px; margin-top:14px; opacity:0; animation:splashFadeIn .5s ease .2s forwards;}
+  #splash-screen .splash-desc{color:#c9bdb9; font-size:12px; margin-top:4px; opacity:0; animation:splashFadeIn .5s ease .28s forwards;}
+  #splash-screen .splash-version{color:#8f8386; font-size:11px; margin-top:10px; opacity:0; animation:splashFadeIn .5s ease .42s forwards;}
+  #splash-screen.hide{opacity:0; visibility:hidden;}
+  @keyframes splashPop{from{transform:scale(.7); opacity:0;} to{transform:scale(1); opacity:1;}}
+  @keyframes splashFadeIn{to{opacity:1;}}
+
+  button, .item, .pill, .ropa-card, .day-row, .cswatch, .swatch{transition:transform .12s ease;}
+  button:active, .pill:active, .ropa-card:active, .day-row:active{transform:scale(0.96);}
+  .add:active{transform:scale(0.92);}
+
+  section{animation:tabFadeIn .28s ease;}
+  @keyframes tabFadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  #onboarding-modal > div, #bg-editor-modal .box, #recuerdo-popup-modal > div{animation:modalPop .25s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes modalPop{from{opacity:0; transform:scale(.92) translateY(8px);} to{opacity:1; transform:scale(1) translateY(0);}}
 </style>
 </head>
 <body>
+<div id="splash-screen">
+  <img src="icon-512.png" alt="Darryn">
+  <div class="splash-name">Darryn</div>
+  <div class="splash-desc">Tu organizador personal</div>
+  <div class="splash-version">v3.2</div>
+</div>
 <div class="app">
   <header style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
     <div>
       <h1 id="app-title" style="cursor:pointer;" onclick="openOnboarding()">Mi Libreta</h1>
-      <span style="font-size:10px; color:var(--muted); letter-spacing:.03em;">v2.9</span>
       <p>Compras, cuentas, jornada y recordatorios</p>
     </div>
     <label class="profile-pic-wrap" title="Foto de perfil">
@@ -670,6 +694,7 @@ function addCompra(){
   const input = document.getElementById('compra-input');
   const t = input.value.trim();
   if(!t) return;
+  vibrar(15);
   const items = load('compras-items');
   items.unshift({id:uid(), text:t, done:false});
   save('compras-items', items);
@@ -677,6 +702,7 @@ function addCompra(){
   renderCompras();
 }
 function toggleCompra(id){
+  vibrar(12);
   const items = load('compras-items').map(i=> i.id===id ? {...i, done:!i.done} : i);
   save('compras-items', items);
   renderCompras();
@@ -728,6 +754,7 @@ function renderCuentas(){
   }).join('');
 }
 function addCuenta(){
+  vibrar(15);
   const desc = document.getElementById('cuenta-desc');
   const monto = document.getElementById('cuenta-monto');
   const d = desc.value.trim();
@@ -801,6 +828,7 @@ function cicloColorRecordatorio(id){
   renderRecordatorios();
 }
 function addRecordatorio(){
+  vibrar(15);
   const texto = document.getElementById('rec-texto');
   const fecha = document.getElementById('rec-fecha');
   const t = texto.value.trim();
@@ -1666,6 +1694,7 @@ function addHabito(){
   const input = document.getElementById('habito-nombre');
   const nombre = input.value.trim();
   if(!nombre) return;
+  vibrar(15);
   const items = load('habitos-items');
   items.unshift({id:uid(), nombre, tipo:tipoHabitoNuevo, inicio: new Date().toISOString()});
   save('habitos-items', items);
@@ -1674,6 +1703,7 @@ function addHabito(){
 }
 function reiniciarHabito(id){
   if(!confirm('¿Reiniciar el contador de este hábito a cero?')) return;
+  vibrar(20);
   const items = load('habitos-items');
   const it = items.find(i=>i.id===id);
   if(it){ it.inicio = new Date().toISOString(); save('habitos-items', items); renderHabitos(); }
@@ -1825,6 +1855,18 @@ document.getElementById('musica-audio').addEventListener('ended', musicaSiguient
 if(!loadObj('perfil-datos').nombre){ openOnboarding(); } else { aplicarPersonalizacion(); }
 setupAutoHide('tab-compras','compras-content');
 setupAutoHide('tab-recordatorios','recordatorios-content');
+setTimeout(()=>{
+  const splash = document.getElementById('splash-screen');
+  if(splash){
+    splash.classList.add('hide');
+    setTimeout(()=> splash.remove(), 500);
+  }
+}, 1100);
+
+function vibrar(ms){
+  if(navigator.vibrate){ try{ navigator.vibrate(ms||15); }catch(e){} }
+}
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('./service-worker.js').catch(()=>{});

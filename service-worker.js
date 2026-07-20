@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mi-libreta-v2-9';
+const CACHE_NAME = 'darryn-v3-2';
 const ARCHIVOS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', event => {
