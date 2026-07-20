@@ -1,6 +1,6 @@
 {
-  "name": "Mi Libreta",
-  "short_name": "Mi Libreta",
+  "name": "Darryn: tu organizador personal",
+  "short_name": "Darryn",
   "description": "Compras, cuentas, jornada, clóset, ciclo, hábitos, música y recuerdos.",
   "start_url": "./index.html",
   "scope": "./",
