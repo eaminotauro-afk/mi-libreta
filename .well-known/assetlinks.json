@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.eaminotauro_afk.twa",
-        "sha256_cert_fingerprints": ["FE:52:69:83:48:7B:7B:8D:47:CA:22:73:46:20:58:79:39:A7:BC:26:8C:DB:46:2A:C1:68:4D:4A:D5:6C:F1:86"]
-      }
-    }]
